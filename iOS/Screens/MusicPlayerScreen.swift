@@ -83,7 +83,7 @@ struct MusicPlayerScreen_Previews: PreviewProvider {
     }
 
     static var previews: some View {
-        MusicPlayerScreen(controller: MusicPlayerController(), player: player())
+        MusicPlayerScreen(controller: MusicPlayerController(preview: true), player: player())
     }
 }
 #endif
