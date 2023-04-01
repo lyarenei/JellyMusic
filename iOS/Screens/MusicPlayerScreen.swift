@@ -25,7 +25,7 @@ struct MusicPlayerScreen: View {
 
                     SongWithActions(song: song)
 
-                    SeekBar()
+                    SeekBar(song: song, controller: controller)
                         .disabled(true)
 
                     PlaybackControl()
@@ -122,23 +122,32 @@ private struct SongWithActions: View {
 // MARK: - Playback bar
 
 private struct SeekBar: View {
-    @ObservedObject private var player: MusicPlayer = .shared
+    @ObservedObject private var controller: MusicPlayerController
 
     @State private var progress: TimeInterval = 0
     @State private var currentTime: TimeInterval = 0
-    @State private var remainingTime: TimeInterval = 1
+    @State private var remainingTime: TimeInterval
 
-    private var fallbackValue: TimeInterval = 1
+    private let song: Song
+
+    init(
+        song: Song,
+        controller: MusicPlayerController
+    ) {
+        self.song = song
+        _controller = ObservedObject(wrappedValue: controller)
+        remainingTime = song.runtime
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             Slider(
                 value: $progress,
-                in: 0...(player.currentSong?.runtime ?? fallbackValue)
+                in: 0 ... song.runtime
             )
             .onChange(of: progress, perform: { newValue in
                 currentTime = progress
-                remainingTime = player.currentSong?.runtime ?? fallbackValue - progress
+                remainingTime = song.runtime - progress
             })
 
             HStack {
