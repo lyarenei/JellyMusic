@@ -4,7 +4,8 @@ import Foundation
 import OSLog
 import SwiftUI
 
-class MusicPlayer: ObservableObject {
+@MainActor
+final class MusicPlayer: ObservableObject {
     public static let shared = MusicPlayer()
 
     @ObservedObject
@@ -70,7 +71,7 @@ class MusicPlayer: ObservableObject {
             return
         }
 
-        DispatchQueue.main.async {
+        await MainActor.run {
             if let at = at {
                 self.audioPlayer.insertItem(itemId, at: at)
                 self.playbackQueue.insert(song, at: at)
@@ -86,17 +87,19 @@ class MusicPlayer: ObservableObject {
     private func subscribeToCurrentItem() {
         audioPlayer.$currentItemId.sink { [weak self] nextItemId in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                if let currentSong = self.currentSong {
-                    self.playbackHistory.insert(currentSong, at: 0)
-                    self.currentSong = nil
-                }
+            Task(priority: .background) {
+                await MainActor.run {
+                    if let currentSong = self.currentSong {
+                        self.playbackHistory.insert(currentSong, at: 0)
+                        self.currentSong = nil
+                    }
 
-                guard self.playbackQueue.isNotEmpty else {
-                    print("Playback queue is empty")
-                    return
+                    guard self.playbackQueue.isNotEmpty else {
+                        print("Playback queue is empty")
+                        return
+                    }
+                    self.currentSong = self.playbackQueue.removeFirst()
                 }
-                self.currentSong = self.playbackQueue.removeFirst()
             }
         }
         .store(in: &cancellables)
@@ -105,12 +108,14 @@ class MusicPlayer: ObservableObject {
     private func subscribeToPlayerState() {
         audioPlayer.$playerState.sink { [weak self] curState in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                switch curState {
-                case .playing:
-                    self.isPlaying = true
-                default:
-                    self.isPlaying = false
+            Task(priority: .background) {
+                await MainActor.run {
+                    switch curState {
+                    case .playing:
+                        self.isPlaying = true
+                    default:
+                        self.isPlaying = false
+                    }
                 }
             }
         }
