@@ -77,7 +77,7 @@ struct MusicPlayerScreen: View {
 #if DEBUG
 struct MusicPlayerScreen_Previews: PreviewProvider {
     static var player = {
-        var mp = MusicPlayer()
+        var mp = MusicPlayer(preview: true)
         mp.currentSong = PreviewData.songs[0]
         return mp
     }
