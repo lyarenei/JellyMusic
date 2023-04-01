@@ -9,9 +9,6 @@ final class MusicPlayer: ObservableObject {
     public static let shared = MusicPlayer()
 
     @ObservedObject
-    private var songRepo: SongRepository = .shared
-
-    @ObservedObject
     private var audioPlayer: AudioPlayer = .init()
 
     @Published
@@ -66,7 +63,7 @@ final class MusicPlayer: ObservableObject {
     // MARK: - Queuing controls
 
     func enqueue(_ itemId: String, at index: Int? = nil) async throws {
-        guard let song = await songRepo.getSong(by: itemId) else {
+        guard let song = await SongRepository.shared.getSong(by: itemId) else {
             Logger.player.debug("Could not find song for ID: \(itemId)")
             return
         }
