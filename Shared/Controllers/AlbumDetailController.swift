@@ -58,7 +58,7 @@ final class AlbumDetailController: ObservableObject {
         Task(priority: .userInitiated) {
             do {
                 for song in songs {
-                    try await MusicPlayer.shared.enqueue(itemId: song.uuid)
+                    try await MusicPlayer.shared.enqueue(song.uuid)
                 }
                 try await MusicPlayer.shared.play()
             } catch {

@@ -55,7 +55,7 @@ final class MusicPlayer: ObservableObject {
 
     func playNow(itemId: String) async throws {
         stop()
-        try await enqueue(itemId: itemId)
+        try await enqueue(itemId)
         try await play()
     }
 
@@ -65,7 +65,7 @@ final class MusicPlayer: ObservableObject {
 
     // MARK: - Queuing controls
 
-    func enqueue(itemId: String, at index: Int? = nil) async throws {
+    func enqueue(_ itemId: String, at index: Int? = nil) async throws {
         guard let song = await songRepo.getSong(by: itemId) else {
             Logger.player.debug("Could not find song for ID: \(itemId)")
             return

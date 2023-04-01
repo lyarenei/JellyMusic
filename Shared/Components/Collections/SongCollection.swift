@@ -189,7 +189,7 @@ private struct ContextOptions: View  {
         Button {
             Task(priority: .userInitiated) {
                 do {
-                    try await MusicPlayer.shared.enqueue(itemId: song.uuid, at: 0)
+                    try await MusicPlayer.shared.enqueue(song.uuid, at: 0)
                 } catch {
                     print("Failed to enqueue: \(song.uuid)")
                 }
@@ -202,7 +202,7 @@ private struct ContextOptions: View  {
         Button {
             Task(priority: .userInitiated) {
                 do {
-                    try await MusicPlayer.shared.enqueue(itemId: song.uuid)
+                    try await MusicPlayer.shared.enqueue(song.uuid)
                 } catch {
                     print("Failed to enqueue: \(song.uuid)")
                 }
