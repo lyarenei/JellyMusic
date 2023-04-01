@@ -65,16 +65,16 @@ final class MusicPlayer: ObservableObject {
 
     // MARK: - Queuing controls
 
-    func enqueue(itemId: String, at: Int? = nil) async throws {
+    func enqueue(itemId: String, at index: Int? = nil) async throws {
         guard let song = await songRepo.getSong(by: itemId) else {
             Logger.player.debug("Could not find song for ID: \(itemId)")
             return
         }
 
         await MainActor.run {
-            if let at = at {
-                self.audioPlayer.insertItem(itemId, at: at)
-                self.playbackQueue.insert(song, at: at)
+            if let index = index {
+                self.audioPlayer.insertItem(itemId, at: index)
+                self.playbackQueue.insert(song, at: index)
             }
 
             self.audioPlayer.append(itemId: itemId)
