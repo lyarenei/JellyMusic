@@ -29,6 +29,7 @@ class AudioPlayer: ObservableObject {
     private var audioFile: AVAudioFile?
     private var playbackTimer: Timer?
     private var skipRequested = false
+    private var trackStartTime: TimeInterval = 0
 
     init() {
         audioEngineSetup()
@@ -110,6 +111,8 @@ class AudioPlayer: ObservableObject {
         skipRequested = true
         playerNode.stop()
         playerNode.reset()
+        currentTime = 0
+        trackStartTime = 0
         try await playNextItem()
     }
 
@@ -150,7 +153,6 @@ class AudioPlayer: ObservableObject {
 
     private func playNextItem() async throws {
         try await prepareNextItem()
-        stopPlaybackTimer()
         try await play()
     }
 
@@ -162,6 +164,9 @@ class AudioPlayer: ObservableObject {
                 if self.skipRequested {
                     self.skipRequested = false
                 } else {
+                    self.stopPlaybackTimer()
+                    self.trackStartTime = self.currentTime
+                    self.currentTime = 0
                     try await self.playNextItem()
                 }
             }
@@ -209,7 +214,8 @@ class AudioPlayer: ObservableObject {
                 guard let self else { return }
                 if let lastRenderTime = self.playerNode.lastRenderTime,
                    let playerTime = self.playerNode.playerTime(forNodeTime: lastRenderTime) {
-                    self.currentTime = Double(playerTime.sampleTime) / playerTime.sampleRate
+                    let currentTime = Double(playerTime.sampleTime) / playerTime.sampleRate
+                    self.currentTime = currentTime - self.trackStartTime
                 }
             }
 
