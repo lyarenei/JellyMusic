@@ -123,9 +123,8 @@ private struct SongWithActions: View {
 
 private struct SeekBar: View {
     @ObservedObject private var controller: MusicPlayerController
+    @ObservedObject private var player: MusicPlayer = .shared
 
-    @State private var progress: TimeInterval = 0
-    @State private var currentTime: TimeInterval = 0
     @State private var remainingTime: TimeInterval
 
     private let song: Song
@@ -141,17 +140,19 @@ private struct SeekBar: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Slider(
-                value: $progress,
-                in: 0 ... song.runtime
+            ProgressView(
+                value: player.currentTime,
+                total: song.runtime
             )
-            .onChange(of: progress, perform: { newValue in
-                currentTime = progress
-                remainingTime = song.runtime - progress
+            .progressViewStyle(.linear)
+            .padding(.bottom, 10)
+            .padding(.top, 15)
+            .onChange(of: player.currentTime, perform: { newValue in
+                remainingTime = song.runtime - newValue
             })
 
             HStack {
-                Text(currentTime.timeString)
+                Text(player.currentTime.timeString)
                     .font(.caption)
 
                 Spacer()

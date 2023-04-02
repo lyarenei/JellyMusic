@@ -23,12 +23,16 @@ final class MusicPlayer: ObservableObject {
     @Published
     var isPlaying: Bool = false
 
+    @Published
+    var currentTime: TimeInterval = 0
+
     private var cancellables: Cancellables = []
 
     init(preview: Bool = false) {
         guard !preview else { return }
         subscribeToPlayerState()
         subscribeToCurrentItem()
+        subscribeToCurrentTime()
     }
 
     // MARK: - Playback controls
@@ -114,6 +118,16 @@ final class MusicPlayer: ObservableObject {
                         self.isPlaying = false
                     }
                 }
+            }
+        }
+        .store(in: &cancellables)
+    }
+
+    private func subscribeToCurrentTime() {
+        audioPlayer.$currentTime.sink { [weak self] curTime in
+            guard let self = self else { return }
+            Task(priority: .background) {
+                await MainActor.run { self.currentTime = curTime.rounded(.toNearestOrAwayFromZero) }
             }
         }
         .store(in: &cancellables)

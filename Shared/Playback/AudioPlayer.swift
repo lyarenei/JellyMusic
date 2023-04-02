@@ -21,9 +21,13 @@ class AudioPlayer: ObservableObject {
     @Published
     var currentItemId: String?
 
+    @Published
+    var currentTime: TimeInterval = 0
+
     private let audioEngine = AVAudioEngine()
     private var playerNode = AVAudioPlayerNode()
     private var audioFile: AVAudioFile?
+    private var playbackTimer: Timer?
     private var skipRequested = false
 
     init() {
@@ -77,6 +81,7 @@ class AudioPlayer: ObservableObject {
         playerNode.pause()
         audioEngine.pause()
         playerState = .paused
+        stopPlaybackTimer()
         Logger.player.debug("Player is paused")
     }
 
@@ -84,6 +89,7 @@ class AudioPlayer: ObservableObject {
         try? audioEngine.start()
         playerNode.play()
         playerState = .playing
+        Task { await startPlaybackTimer() }
         Logger.player.debug("Player is playing")
     }
 
@@ -95,6 +101,7 @@ class AudioPlayer: ObservableObject {
         queue.removeAll()
         currentItemId = nil
         audioFile = nil
+        stopPlaybackTimer()
         Logger.player.debug("Player is inactive")
     }
 
@@ -143,6 +150,7 @@ class AudioPlayer: ObservableObject {
 
     private func playNextItem() async throws {
         try await prepareNextItem()
+        stopPlaybackTimer()
         try await play()
     }
 
@@ -189,5 +197,29 @@ class AudioPlayer: ObservableObject {
             Logger.player.debug("Failed to create file for playback: \(error)")
             throw PlayerError.tempFileError
         }
+    }
+
+    private func startPlaybackTimer() async {
+        Logger.player.debug("Starting playback timer")
+        await MainActor.run {
+            // Note: Not using CADisplayLink becasue:
+            // 1) It would result in too smooth updates for the seek bar (every 1s is preferable)
+            // 2) Is not available for macOS (there is CVDisplayLink, but the above point still stands)
+            playbackTimer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
+                guard let self else { return }
+                if let lastRenderTime = self.playerNode.lastRenderTime,
+                   let playerTime = self.playerNode.playerTime(forNodeTime: lastRenderTime) {
+                    self.currentTime = Double(playerTime.sampleTime) / playerTime.sampleRate
+                }
+            }
+
+            RunLoop.current.add(playbackTimer!, forMode: .common)
+        }
+    }
+
+    private func stopPlaybackTimer() {
+        Logger.player.debug("Stopping playback timer")
+        playbackTimer?.invalidate()
+        playbackTimer = nil
     }
 }
