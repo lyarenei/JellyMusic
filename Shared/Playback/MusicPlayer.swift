@@ -76,6 +76,7 @@ final class MusicPlayer: ObservableObject {
             if let index = index {
                 self.audioPlayer.insertItem(itemId, at: index)
                 self.playbackQueue.insert(song, at: index)
+                return
             }
 
             self.audioPlayer.append(itemId: itemId)
