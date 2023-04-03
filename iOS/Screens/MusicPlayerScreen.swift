@@ -2,52 +2,41 @@ import SFSafeSymbols
 import SwiftUI
 
 struct MusicPlayerScreen: View {
-    @StateObject
-    private var controller: MusicPlayerController
-
     @ObservedObject
-    private var player: MusicPlayer
+    var player: MusicPlayer
 
-    init(
-        controller: MusicPlayerController,
-        player: MusicPlayer = .shared
-    ) {
-        _controller = StateObject(wrappedValue: controller)
+    init(player: MusicPlayer = .shared) {
         _player = ObservedObject(wrappedValue: player)
     }
 
     var body: some View {
-        if let song = player.currentSong {
-            VStack(spacing: 15) {
-                ArtworkComponent(itemId: song.uuid)
-                    .frame(width: 270, height: 270)
+        VStack(spacing: 15) {
+            ArtworkComponent(itemId: player.currentSong?.uuid ?? "")
+                .frame(width: 270, height: 270)
 
-                SongWithActions(song: song)
+            SongWithActions(song: $player.currentSong)
 
-                SeekBar(song: song, controller: controller)
-                    .disabled(true)
+            SeekBar(song: $player.currentSong, currentTime: $player.currentTime)
+                .disabled(true)
 
-                PlaybackControl()
-                    .font(.largeTitle)
-                    .buttonStyle(.plain)
-                    .padding(.horizontal, 50)
+            PlaybackControl()
+                .font(.largeTitle)
+                .buttonStyle(.plain)
+                .padding(.horizontal, 50)
 
-                VolumeBar()
-                    .font(.footnote)
-                    .padding(.bottom, 20)
-                    .disabled(true)
-                    .foregroundColor(.init(UIColor.secondaryLabel))
+            VolumeBar()
+                .font(.footnote)
+                .padding(.bottom, 20)
+                .disabled(true)
+                .foregroundColor(.init(UIColor.secondaryLabel))
 
-                BottomPlaceholder()
-                    .padding(.horizontal, 50)
-                    .font(.title3)
-                    .foregroundColor(.init(UIColor.secondaryLabel))
-                    .frame(height: 40)
-            }
-            .padding([.top, .horizontal], 30)
-        } else {
-            EmptyView()
+            BottomPlaceholder()
+                .padding(.horizontal, 50)
+                .font(.title3)
+                .foregroundColor(.init(UIColor.secondaryLabel))
+                .frame(height: 40)
         }
+        .padding([.top, .horizontal], 30)
     }
 }
 
@@ -55,12 +44,12 @@ struct MusicPlayerScreen: View {
 struct MusicPlayerScreen_Previews: PreviewProvider {
     static var player = {
         var mp = MusicPlayer(preview: true)
-        mp.currentSong = PreviewData.songs[0]
+        mp.currentSong = PreviewData.songs.first!
         return mp
     }
 
     static var previews: some View {
-        MusicPlayerScreen(controller: MusicPlayerController(preview: true), player: player())
+        MusicPlayerScreen(player: player())
     }
 }
 #endif
@@ -68,12 +57,16 @@ struct MusicPlayerScreen_Previews: PreviewProvider {
 // MARK: - Song with actions
 
 private struct SongWithActions: View {
-    var song: Song
+    @Binding
+    var song: Song?
+
+    @State
+    var isPopoverPresented: Bool = false
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 3) {
-                Text(song.name)
+                Text(song?.name ?? "")
                     .bold()
                     .lineLimit(1)
                     .font(.title2)
@@ -99,37 +92,39 @@ private struct SongWithActions: View {
 // MARK: - Playback bar
 
 private struct SeekBar: View {
-    @ObservedObject private var controller: MusicPlayerController
-    @ObservedObject private var player: MusicPlayer = .shared
+    @Binding
+    var song: Song?
 
-    @State private var remainingTime: TimeInterval
+    @Binding
+    var currentTime: TimeInterval
 
-    private let song: Song
+    @State
+    private var remainingTime: TimeInterval
 
     init(
-        song: Song,
-        controller: MusicPlayerController
+        song: Binding<Song?>,
+        currentTime: Binding<TimeInterval>
     ) {
-        self.song = song
-        _controller = ObservedObject(wrappedValue: controller)
-        remainingTime = song.runtime
+        _song = song
+        _currentTime = currentTime
+        remainingTime = song.wrappedValue?.runtime ?? 0
     }
 
     var body: some View {
         VStack(spacing: 0) {
             ProgressView(
-                value: player.currentTime,
-                total: song.runtime
+                value: currentTime,
+                total: song?.runtime ?? 0
             )
             .progressViewStyle(.linear)
             .padding(.bottom, 10)
             .padding(.top, 15)
-            .onChange(of: player.currentTime, perform: { newValue in
-                remainingTime = song.runtime - newValue
+            .onChange(of: currentTime, perform: { newValue in
+                remainingTime = song?.runtime ?? 0 - newValue
             })
 
             HStack {
-                Text(player.currentTime.timeString)
+                Text(currentTime.timeString)
                     .font(.caption)
 
                 Spacer()
