@@ -1,4 +1,3 @@
-import LNPopupUI
 import SwiftUI
 
 struct HomeScreen: View {
@@ -13,12 +12,15 @@ struct HomeScreen: View {
 
     var body: some View {
         TabView {
-            LibraryScreen()
-                .tabItem {
-                    Image(systemSymbol: .musicQuarternote3)
-                    Text("Library")
-                }
-                .tag("library_tab")
+            NowPlayingComponent(
+                isPresented: $isPlayerPresented,
+                content: LibraryScreen()
+            )
+            .tabItem {
+                Image(systemSymbol: .musicQuarternote3)
+                Text("Library")
+            }
+            .tag("library_tab")
 
             Text("Search")
                 .tabItem {
@@ -35,10 +37,9 @@ struct HomeScreen: View {
                 .tag("settings_tab")
         }
         .onChange(of: player.currentSong) { curSong in
-            isPlayerPresented = curSong != nil
-        }
-        .popup(isBarPresented: $isPlayerPresented, isPopupOpen: $isPlayerOpen) {
-            MusicPlayerScreen(controller: MusicPlayerController())
+            withAnimation(.linear) {
+                isPlayerPresented = curSong != nil
+            }
         }
     }
 }
