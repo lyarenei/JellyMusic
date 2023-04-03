@@ -90,6 +90,7 @@ class AudioPlayer: ObservableObject {
         try? audioEngine.start()
         playerNode.play()
         playerState = .playing
+        stopAdvance = false
         Task { await startPlaybackTimer() }
         Logger.player.debug("Player is playing")
     }
