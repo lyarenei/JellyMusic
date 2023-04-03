@@ -28,7 +28,7 @@ class AudioPlayer: ObservableObject {
     private var playerNode = AVAudioPlayerNode()
     private var audioFile: AVAudioFile?
     private var playbackTimer: Timer?
-    private var skipRequested = false
+    private var stopAdvance = false
     private var trackStartTime: TimeInterval = 0
 
     init() {
@@ -95,6 +95,7 @@ class AudioPlayer: ObservableObject {
     }
 
     func stop() {
+        stopAdvance = true
         playerNode.stop()
         playerNode.reset()
         audioEngine.stop()
@@ -108,7 +109,7 @@ class AudioPlayer: ObservableObject {
 
     func skipToNext() async throws {
         Logger.player.debug("Requested skip to next item")
-        skipRequested = true
+        stopAdvance = true
         playerNode.stop()
         playerNode.reset()
         currentTime = 0
@@ -161,8 +162,8 @@ class AudioPlayer: ObservableObject {
         // Xcode suggestion is for iOS 15
         playerNode.scheduleFile(audioFile!, at: nil) {
             Task(priority: .background) {
-                if self.skipRequested {
-                    self.skipRequested = false
+                if self.stopAdvance {
+                    self.stopAdvance = false
                 } else {
                     self.stopPlaybackTimer()
                     self.trackStartTime = self.currentTime
