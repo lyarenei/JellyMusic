@@ -11,7 +11,7 @@ struct NowPlayingComponent<Content: View>: View {
     var content: Content
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        VStack(spacing: 0) {
             content
 
             if isPresented {
