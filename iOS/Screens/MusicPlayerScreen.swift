@@ -146,16 +146,22 @@ private struct PlaybackControl: View {
         HStack {
             PlayPreviousButton(player: player)
                 .font(.title2)
+                .frame(width: 50, height: 50)
+                .contentShape(Rectangle())
                 .disabled(player.playbackHistory.isEmpty)
 
             Spacer()
 
             PlayPauseButton(player: player)
+                .frame(width: 50, height: 50)
+                .contentShape(Rectangle())
 
             Spacer()
 
             PlayNextButton(player: player)
                 .font(.title2)
+                .frame(width: 50, height: 50)
+                .contentShape(Rectangle())
                 .disabled(player.playbackQueue.isEmpty)
         }
         .frame(height: 40)
