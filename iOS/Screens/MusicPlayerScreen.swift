@@ -158,8 +158,7 @@ private struct PlaybackControl: View {
 
             Spacer()
 
-            // TODO: pass song ID directly
-            PlayPauseButton(for: player.currentSong?.uuid ?? "", player: player)
+            PlayPauseButton(player: player)
 
             Spacer()
 

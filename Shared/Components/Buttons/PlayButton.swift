@@ -45,15 +45,12 @@ struct PlayPauseButton: View {
     var player: MusicPlayer
 
     let text: String?
-    let itemId: String
 
     init(
         _ text: String? = nil,
-        for itemId: String,
         player: MusicPlayer = .shared
     ) {
         self.text = text
-        self.itemId = itemId
         _player = ObservedObject(wrappedValue: player)
     }
 
@@ -73,7 +70,7 @@ struct PlayPauseButton: View {
 struct PlayButton_Previews: PreviewProvider {
     static var previews: some View {
         PlayButton(for: PreviewData.songs.first!.uuid, player: .init(preview: true))
-        PlayPauseButton(for: PreviewData.songs.first!.uuid, player: .init(preview: true))
+        PlayPauseButton(player: .init(preview: true))
             .previewDisplayName("Play/Pause button")
     }
 }

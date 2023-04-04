@@ -68,7 +68,7 @@ private struct NowPlayingBar: View {
             }
             .buttonStyle(.plain)
 
-            PlayPauseButton(for: player.currentSong?.uuid ?? "", player: player)
+            PlayPauseButton(player: player)
                 .frame(width: 60, height: 60)
                 .font(.title2)
                 .buttonStyle(.plain)
