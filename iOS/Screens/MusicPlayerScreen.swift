@@ -163,17 +163,9 @@ private struct PlaybackControl: View {
 
             Spacer()
 
-            Button { Task(priority: .userInitiated) {
-                do {
-                    try await player.skipForward()
-                } catch {
-                    print("Skip to next track failed: \(error)")
-                }
-            }} label: {
-                Image(systemSymbol: .forwardFill)
-            }
-            .font(.title2)
-            .disabled(player.playbackQueue.isEmpty)
+            PlayNextButton(player: player)
+                .font(.title2)
+                .disabled(player.playbackQueue.isEmpty)
         }
         .frame(height: 40)
     }

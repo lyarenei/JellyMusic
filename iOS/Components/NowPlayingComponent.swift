@@ -74,7 +74,11 @@ private struct NowPlayingBar: View {
                 .buttonStyle(.plain)
                 .contentShape(Rectangle())
 
-            SkipButton(player: player)
+            PlayNextButton(player: player)
+                .font(.title2)
+                .frame(width: 60, height: 60)
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
         }
         .padding(.trailing, 10)
         .frame(width: UIScreen.main.bounds.size.width, height: 65)
@@ -101,33 +105,6 @@ private struct SongInfo: View {
                 .padding(.leading, 10)
 
             Spacer()
-        }
-    }
-}
-
-private struct SkipButton: View {
-    @ObservedObject
-    var player: MusicPlayer
-
-    var body: some View {
-        Button {
-            action()
-        } label: {
-            Image(systemName: .forwardFill)
-                .font(.title2)
-                .frame(width: 60, height: 60)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-    }
-
-    func action() {
-        Task(priority: .userInitiated) {
-            do {
-                try await player.skipForward()
-            } catch {
-                print("Failed to skip")
-            }
         }
     }
 }
