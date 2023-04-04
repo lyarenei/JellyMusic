@@ -166,7 +166,6 @@ private struct SEC: View {
     }
 }
 
-// TODO: extract to standalone buttons like download/favorite
 private struct ContextOptions: View  {
     let song: Song
 
