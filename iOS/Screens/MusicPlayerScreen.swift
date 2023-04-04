@@ -154,7 +154,7 @@ private struct PlaybackControl: View {
                 Image(systemSymbol: .backwardFill)
             }
             .font(.title2)
-            .disabled(true)
+            .disabled(player.playbackHistory.isEmpty)
 
             Spacer()
 
@@ -180,6 +180,7 @@ private struct PlaybackControl: View {
                 Image(systemSymbol: .forwardFill)
             }
             .font(.title2)
+            .disabled(player.playbackQueue.isEmpty)
         }
         .frame(height: 40)
     }
