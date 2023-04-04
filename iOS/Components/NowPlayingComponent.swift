@@ -68,7 +68,11 @@ private struct NowPlayingBar: View {
             }
             .buttonStyle(.plain)
 
-            PlayPauseButton(player: player)
+            PlayPauseButton(for: player.currentSong?.uuid ?? "", player: player)
+                .frame(width: 60, height: 60)
+                .font(.title2)
+                .buttonStyle(.plain)
+                .contentShape(Rectangle())
 
             SkipButton(player: player)
         }
@@ -98,23 +102,6 @@ private struct SongInfo: View {
 
             Spacer()
         }
-    }
-}
-
-private struct PlayPauseButton: View {
-    @ObservedObject
-    var player: MusicPlayer
-
-    var body: some View {
-        Button {
-            player.isPlaying ? player.pause() : player.resume()
-        } label: {
-            Image(systemSymbol: player.isPlaying ? .pauseFill : .playFill)
-                .font(.title2)
-                .frame(width: 60, height: 60)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
     }
 }
 

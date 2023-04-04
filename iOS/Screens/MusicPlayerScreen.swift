@@ -158,15 +158,8 @@ private struct PlaybackControl: View {
 
             Spacer()
 
-            Button {
-                player.isPlaying ? player.pause() : player.resume()
-            } label: {
-                if self.player.isPlaying {
-                    Image(systemSymbol: .pauseFill)
-                } else {
-                    Image(systemSymbol: .playFill)
-                }
-            }
+            // TODO: pass song ID directly
+            PlayPauseButton(for: player.currentSong?.uuid ?? "", player: player)
 
             Spacer()
 

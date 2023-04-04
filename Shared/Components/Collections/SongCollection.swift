@@ -171,19 +171,8 @@ private struct ContextOptions: View  {
     let song: Song
 
     var body: some View {
-        Button { Task(priority: .userInitiated) {
-            do {
-                try await MusicPlayer.shared.playNow(itemId: song.uuid)
-            } catch {
-                print("Failed to play song \(song.uuid)")
-            }
-        }} label: {
-            Image(systemSymbol: .playFill)
-            Text("Play")
-        }
-
+        PlayButton("Play", for: song.uuid)
         DownloadButton(for: song.uuid, showText: true)
-
         FavoriteButton(isFavorite: false)
 
         Button {
