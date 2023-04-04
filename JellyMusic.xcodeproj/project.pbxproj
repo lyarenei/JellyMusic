@@ -36,6 +36,8 @@
 		9B1EF39E29DC97B100C2A33B /* PlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1EF39C29DC97B100C2A33B /* PlayButton.swift */; };
 		9B1EF3A029DCA16200C2A33B /* PlayNextButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1EF39F29DCA16200C2A33B /* PlayNextButton.swift */; };
 		9B1EF3A129DCA16200C2A33B /* PlayNextButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1EF39F29DCA16200C2A33B /* PlayNextButton.swift */; };
+		9B1EF3A329DCA62C00C2A33B /* PlayPreviousButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1EF3A229DCA62C00C2A33B /* PlayPreviousButton.swift */; };
+		9B1EF3A429DCA62C00C2A33B /* PlayPreviousButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1EF3A229DCA62C00C2A33B /* PlayPreviousButton.swift */; };
 		9B36DAC229CB90CF008C4FE7 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B36DAC129CB90CF008C4FE7 /* MusicPlayer.swift */; };
 		9B36DAC329CB90CF008C4FE7 /* MusicPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B36DAC129CB90CF008C4FE7 /* MusicPlayer.swift */; };
 		9B36DAC729CCAF14008C4FE7 /* LibraryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B36DAC629CCAF14008C4FE7 /* LibraryController.swift */; };
@@ -160,6 +162,7 @@
 		9B1EF39A29D9F90800C2A33B /* NowPlayingComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingComponent.swift; sourceTree = "<group>"; };
 		9B1EF39C29DC97B100C2A33B /* PlayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayButton.swift; sourceTree = "<group>"; };
 		9B1EF39F29DCA16200C2A33B /* PlayNextButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayNextButton.swift; sourceTree = "<group>"; };
+		9B1EF3A229DCA62C00C2A33B /* PlayPreviousButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayPreviousButton.swift; sourceTree = "<group>"; };
 		9B36DAC129CB90CF008C4FE7 /* MusicPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayer.swift; sourceTree = "<group>"; };
 		9B36DAC429CB941C008C4FE7 /* JellyMusic--iOS--Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "JellyMusic--iOS--Info.plist"; sourceTree = "<group>"; };
 		9B36DAC629CCAF14008C4FE7 /* LibraryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryController.swift; sourceTree = "<group>"; };
@@ -473,6 +476,7 @@
 				9BF7AF8B29CDF1C8004E0DA7 /* PrimaryActionButton.swift */,
 				9B1EF39C29DC97B100C2A33B /* PlayButton.swift */,
 				9B1EF39F29DCA16200C2A33B /* PlayNextButton.swift */,
+				9B1EF3A229DCA62C00C2A33B /* PlayPreviousButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -667,6 +671,7 @@
 				48C1F8C229B9E795003BE048 /* Store+common.swift in Sources */,
 				9BB75E9B29C38610008CD65A /* DownloadedIcon.swift in Sources */,
 				9B80476629B86F460069B407 /* LibraryScreen.swift in Sources */,
+				9B1EF3A329DCA62C00C2A33B /* PlayPreviousButton.swift in Sources */,
 				9BB754DB29BA604C009BB3A6 /* DTOs.swift in Sources */,
 				9BDB098D29BB1DD9007F99E4 /* SongService.swift in Sources */,
 				9B1EF3A029DCA16200C2A33B /* PlayNextButton.swift in Sources */,
@@ -778,6 +783,7 @@
 				4848B22729BCBC2000EB2FAA /* Cancellables.swift in Sources */,
 				9BDB099A29BB2FBF007F99E4 /* ImageService.swift in Sources */,
 				9B3D449D29BCF89A0054C9E0 /* SystemService.swift in Sources */,
+				9B1EF3A429DCA62C00C2A33B /* PlayPreviousButton.swift in Sources */,
 				9B1EF39E29DC97B100C2A33B /* PlayButton.swift in Sources */,
 				9B36DAD129CCE232008C4FE7 /* AlbumLibraryController.swift in Sources */,
 			);
