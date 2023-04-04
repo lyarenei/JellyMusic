@@ -174,31 +174,7 @@ private struct ContextOptions: View  {
         PlayButton("Play", for: song.uuid)
         DownloadButton(for: song.uuid, showText: true)
         FavoriteButton(isFavorite: false)
-
-        Button {
-            Task(priority: .userInitiated) {
-                do {
-                    try await MusicPlayer.shared.enqueue(song.uuid, at: 0)
-                } catch {
-                    print("Failed to enqueue: \(song.uuid)")
-                }
-            }
-        } label: {
-            Image(systemSymbol: .textInsert)
-            Text("Play Next")
-        }
-
-        Button {
-            Task(priority: .userInitiated) {
-                do {
-                    try await MusicPlayer.shared.enqueue(song.uuid)
-                } catch {
-                    print("Failed to enqueue: \(song.uuid)")
-                }
-            }
-        } label: {
-            Image(systemSymbol: .textAppend)
-            Text("Play Last")
-        }
+        EnqueueButton("Play Next", for: song.uuid, mode: .playNext)
+        EnqueueButton("Play Last", for: song.uuid)
     }
 }
