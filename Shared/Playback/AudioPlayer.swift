@@ -164,13 +164,15 @@ class AudioPlayer: ObservableObject {
         playerNode.scheduleFile(audioFile!, at: nil) {
             Task(priority: .background) {
                 if self.stopAdvance {
+                    Logger.player.debug("Requested to not advance in queue")
                     self.stopAdvance = false
-                } else {
-                    self.stopPlaybackTimer()
-                    self.trackStartTime = self.currentTime
-                    self.currentTime = 0
-                    try await self.playNextItem()
+                    return
                 }
+
+                self.stopPlaybackTimer()
+                self.trackStartTime = self.currentTime
+                self.currentTime = 0
+                try await self.playNextItem()
             }
         }
     }
