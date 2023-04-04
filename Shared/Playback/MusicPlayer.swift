@@ -67,6 +67,14 @@ final class MusicPlayer: ObservableObject {
         playbackHistory.insert(previousSong, at: 0)
     }
 
+    func skipBackward() async throws {
+        guard playbackHistory.isNotEmpty else { return }
+        let nextSong = playbackHistory.removeFirst()
+        try await enqueue(nextSong.uuid, at: 0)
+        try await audioPlayer.skipToNext()
+        playbackQueue.insert(nextSong, at: 0)
+    }
+
     // MARK: - Queuing controls
 
     func enqueue(_ itemId: String, at index: Int? = nil) async throws {

@@ -144,9 +144,13 @@ private struct PlaybackControl: View {
 
     var body: some View {
         HStack {
-            Button {
-                // Previous song
-            } label: {
+            Button { Task(priority: .userInitiated) {
+                do {
+                    try await player.skipBackward()
+                } catch {
+                    print("Skip to previous track failed: \(error)")
+                }
+            }} label: {
                 Image(systemSymbol: .backwardFill)
             }
             .font(.title2)
