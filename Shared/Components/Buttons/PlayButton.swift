@@ -35,6 +35,7 @@ struct PlayButton: View {
                 try await player.playNow(itemId: itemId)
             } catch {
                 print("Failed to start playback")
+                player.stop()
             }
         }
     }

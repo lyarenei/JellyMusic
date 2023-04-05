@@ -91,6 +91,7 @@ private struct SongList: View {
                         try await MusicPlayer.shared.playNow(itemId: song.uuid)
                     } catch {
                         print("Failed to play item \(song.uuid)")
+                        MusicPlayer.shared.stop()
                     }
                 }}
                 .contentShape(Rectangle())
