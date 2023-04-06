@@ -104,6 +104,7 @@ final class MusicPlayer: ObservableObject {
                 await MainActor.run {
                     if let currentSong = self.currentSong {
                         self.playbackHistory.insert(currentSong, at: 0)
+                        Logger.player.debug("Added track \(currentSong.uuid) to playback history")
                     }
 
                     guard self.playbackQueue.isNotEmpty else {
