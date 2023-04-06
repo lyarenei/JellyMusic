@@ -76,8 +76,6 @@
 		9B54962529CD742D00FB4191 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B54962329CD742D00FB4191 /* AudioPlayer.swift */; };
 		9B61365E29BCB254004C85EC /* MacHomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B61365D29BCB254004C85EC /* MacHomeScreen.swift */; };
 		9B6C17CD29D6BE700061866A /* AirPlayComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6C17CC29D6BE700061866A /* AirPlayComponent.swift */; };
-		9B6C17D329D786D20061866A /* MusicPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6C17D229D786D20061866A /* MusicPlayerController.swift */; };
-		9B6C17D429D786D20061866A /* MusicPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B6C17D229D786D20061866A /* MusicPlayerController.swift */; };
 		9B70BD9D29B91F42000DB31C /* AlbumTileComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B70BD9C29B91F42000DB31C /* AlbumTileComponent.swift */; };
 		9B70BD9E29B91F42000DB31C /* AlbumTileComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B70BD9C29B91F42000DB31C /* AlbumTileComponent.swift */; };
 		9B70BDA029B923AE000DB31C /* AlbumDetailScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B70BD9F29B923AE000DB31C /* AlbumDetailScreen.swift */; };
@@ -186,7 +184,6 @@
 		9B54962329CD742D00FB4191 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
 		9B61365D29BCB254004C85EC /* MacHomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacHomeScreen.swift; sourceTree = "<group>"; };
 		9B6C17CC29D6BE700061866A /* AirPlayComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirPlayComponent.swift; sourceTree = "<group>"; };
-		9B6C17D229D786D20061866A /* MusicPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerController.swift; sourceTree = "<group>"; };
 		9B70BD9C29B91F42000DB31C /* AlbumTileComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumTileComponent.swift; sourceTree = "<group>"; };
 		9B70BD9F29B923AE000DB31C /* AlbumDetailScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumDetailScreen.swift; sourceTree = "<group>"; };
 		9B73ECF829C8F085007F74DB /* MusicPlayerScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerScreen.swift; sourceTree = "<group>"; };
@@ -301,7 +298,6 @@
 				9B36DACB29CCD94C008C4FE7 /* AlbumDetailController.swift */,
 				9B36DAC829CCC229008C4FE7 /* AlbumLibraryController.swift */,
 				9B36DACE29CCE134008C4FE7 /* SongLibraryController.swift */,
-				9B6C17D229D786D20061866A /* MusicPlayerController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -694,7 +690,6 @@
 				9B80474329B768010069B407 /* JellyMusicApp.swift in Sources */,
 				48C1F8D029B9F3E4003BE048 /* DefaultAlbumService.swift in Sources */,
 				9BB75EB629C4F751008CD65A /* InlineValueComponent.swift in Sources */,
-				9B6C17D329D786D20061866A /* MusicPlayerController.swift in Sources */,
 				9BB75EAA29C39FFF008CD65A /* SongRepository.swift in Sources */,
 				9B73ECFF29C9ECC5007F74DB /* MockMediaService.swift in Sources */,
 				9BDB099F29BB322A007F99E4 /* DummyImageService.swift in Sources */,
@@ -768,7 +763,6 @@
 				9BDB09A629BB4816007F99E4 /* ArtworkComponent.swift in Sources */,
 				9B70BDA129B923AE000DB31C /* AlbumDetailScreen.swift in Sources */,
 				9BDB099429BB1F57007F99E4 /* DummySongService.swift in Sources */,
-				9B6C17D429D786D20061866A /* MusicPlayerController.swift in Sources */,
 				48C1F8CA29B9EA60003BE048 /* DTOs+Identifiable.swift in Sources */,
 				9BB75E8329C12187008CD65A /* ListOptionComponent.swift in Sources */,
 				9B3C7BEA29D0702600884597 /* Logger.swift in Sources */,
