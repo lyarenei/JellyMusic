@@ -46,7 +46,18 @@ final class MusicPlayer: ObservableObject {
     }
 
     func resume() {
-        audioPlayer.resume()
+        switch audioPlayer.playerState {
+        case .inactive:
+            guard let currentSong = currentSong else { return }
+            Task(priority: .userInitiated) {
+                try await enqueue(currentSong.uuid, at: 0)
+                try await audioPlayer.play()
+            }
+        case .paused:
+            audioPlayer.resume()
+        case .playing:
+            return
+        }
     }
 
     func stop() {
