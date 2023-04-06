@@ -104,7 +104,6 @@ final class MusicPlayer: ObservableObject {
                 await MainActor.run {
                     if let currentSong = self.currentSong {
                         self.playbackHistory.insert(currentSong, at: 0)
-                        self.currentSong = nil
                     }
 
                     guard self.playbackQueue.isNotEmpty else {
