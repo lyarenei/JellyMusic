@@ -109,8 +109,8 @@ final class MusicPlayer: ObservableObject {
     // MARK: - Subscribers
 
     private func subscribeToCurrentItem() {
-        audioPlayer.$currentItemId.sink { [weak self] nextItemId in
-            Logger.player.warning("AudioPlayer changed current item id to: \(nextItemId ?? "nil")")
+        audioPlayer.$currentItemId.sink { [weak self] newItemId in
+            Logger.player.warning("AudioPlayer changed current item id to: \(newItemId ?? "nil")")
             guard let self = self else { return }
             Task(priority: .background) {
                 await MainActor.run {
@@ -119,13 +119,13 @@ final class MusicPlayer: ObservableObject {
                         Logger.player.debug("Added track \(currentSong.uuid) to playback history")
                     }
 
-                    guard let nextItemId = nextItemId else {
-                        Logger.player.debug("Next track ID is nil, will not do anything")
+                    guard let newItemId = newItemId else {
+                        Logger.player.debug("New item ID is nil, will not do anything")
                         return
                     }
 
                     guard self.playbackQueue.isNotEmpty else {
-                        Logger.player.warning("Playback queue is empty, but track \(nextItemId) will be played")
+                        Logger.player.warning("Playback queue is empty, but track \(newItemId) will be played")
                         return
                     }
 
