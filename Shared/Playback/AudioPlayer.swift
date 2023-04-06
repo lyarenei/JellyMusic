@@ -105,6 +105,8 @@ class AudioPlayer: ObservableObject {
         currentItemId = nil
         audioFile = nil
         stopPlaybackTimer()
+        currentTime = 0
+        trackStartTime = 0
         Logger.player.debug("Player is inactive")
     }
 
