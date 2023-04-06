@@ -162,7 +162,6 @@ class AudioPlayer: ObservableObject {
 
     private func scheduleAudio() {
         Logger.player.debug("Scheduling audio file to play")
-        // Xcode suggestion is for iOS 15
         playerNode.scheduleFile(audioFile!, at: nil) {
             Task(priority: .background) {
                 if self.stopAdvance {
