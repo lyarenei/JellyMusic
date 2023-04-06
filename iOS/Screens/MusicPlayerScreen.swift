@@ -120,7 +120,7 @@ private struct SeekBar: View {
             .padding(.bottom, 10)
             .padding(.top, 15)
             .onChange(of: currentTime, perform: { newValue in
-                remainingTime = song?.runtime ?? 0 - newValue
+                remainingTime = (song?.runtime ?? 0) - newValue
             })
 
             HStack {
