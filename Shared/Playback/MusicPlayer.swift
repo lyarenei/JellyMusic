@@ -110,6 +110,7 @@ final class MusicPlayer: ObservableObject {
 
     private func subscribeToCurrentItem() {
         audioPlayer.$currentItemId.sink { [weak self] nextItemId in
+            Logger.player.warning("AudioPlayer changed current item id to: \(nextItemId ?? "nil")")
             guard let self = self else { return }
             Task(priority: .background) {
                 await MainActor.run {
