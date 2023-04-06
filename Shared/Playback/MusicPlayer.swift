@@ -107,6 +107,11 @@ final class MusicPlayer: ObservableObject {
                         Logger.player.debug("Added track \(currentSong.uuid) to playback history")
                     }
 
+                    guard let nextItemId = nextItemId else {
+                        Logger.player.debug("Next track ID is nil, will not do anything")
+                        return
+                    }
+
                     guard self.playbackQueue.isNotEmpty else {
                         print("Playback queue is empty")
                         return
