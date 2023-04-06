@@ -113,9 +113,10 @@ final class MusicPlayer: ObservableObject {
                     }
 
                     guard self.playbackQueue.isNotEmpty else {
-                        print("Playback queue is empty")
+                        Logger.player.warning("Playback queue is empty, but track \(nextItemId) will be played")
                         return
                     }
+
                     self.currentSong = self.playbackQueue.removeFirst()
                 }
             }
