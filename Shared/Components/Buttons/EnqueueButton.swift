@@ -43,9 +43,9 @@ struct EnqueueButton: View {
             do {
                 switch mode {
                 case .playNext:
-                    try await player.enqueue(itemId, at: 0)
+                    try await player.enqueue(itemId: itemId, position: .next)
                 case .playLast:
-                    try await player.enqueue(itemId)
+                    try await player.enqueue(itemId: itemId, position: .last)
                 }
             } catch {
                 print("Failed to enqueue \(itemId)")

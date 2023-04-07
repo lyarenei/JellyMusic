@@ -8,47 +8,24 @@ enum PlayerState: String {
 }
 
 enum PlayerError: Error {
-    case emptyQueue, tempFileError, noData(itemId: String)
+    case tempFileError, noData(itemId: String)
 }
 
-class AudioPlayer: ObservableObject {
+final class AudioPlayer: ObservableObject {
     @Published
-    var playerState: PlayerState = .inactive
+    private(set) var playerState: PlayerState = .inactive
 
     @Published
-    var queue: [String] = []
-
-    @Published
-    var currentItemId: String?
-
-    @Published
-    var currentTime: TimeInterval = 0
+    private(set) var currentTime: TimeInterval = 0
 
     private let audioEngine = AVAudioEngine()
-    private var playerNode = AVAudioPlayerNode()
+    private let playerNode = AVAudioPlayerNode()
     private var audioFile: AVAudioFile?
     private var playbackTimer: Timer?
-    private var stopAdvance = false
     private var trackStartTime: TimeInterval = 0
 
     init() {
         audioEngineSetup()
-
-        // Set interruption handler
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleInterruption),
-            name: AVAudioSession.interruptionNotification,
-            object: nil
-        )
-    }
-
-    deinit {
-        NotificationCenter.default.removeObserver(
-            self,
-            name: AVAudioSession.interruptionNotification,
-            object: nil
-        )
     }
 
     private func audioEngineSetup() {
@@ -69,13 +46,16 @@ class AudioPlayer: ObservableObject {
         }
     }
 
-    func play() async throws {
-        if currentItemId == nil {
-            try await prepareNextItem()
+    func play(song: Song) async throws {
+        Logger.player.debug("Playing song \(song.uuid)")
+        let audioFile = try getItemAudioFile(by: song.uuid)
+        self.audioFile = audioFile
+        await withCheckedContinuation { continuation in
+            playerNode.scheduleFile(audioFile, at: nil) {
+                continuation.resume()
+            }
+            resume()
         }
-
-        scheduleAudio()
-        resume()
     }
 
     func pause() {
@@ -90,19 +70,15 @@ class AudioPlayer: ObservableObject {
         try? audioEngine.start()
         playerNode.play()
         playerState = .playing
-        stopAdvance = false
         Task { await startPlaybackTimer() }
         Logger.player.debug("Player is playing")
     }
 
     func stop() {
-        stopAdvance = true
         playerNode.stop()
         playerNode.reset()
         audioEngine.stop()
         playerState = .inactive
-        queue.removeAll()
-        currentItemId = nil
         audioFile = nil
         stopPlaybackTimer()
         currentTime = 0
@@ -110,93 +86,7 @@ class AudioPlayer: ObservableObject {
         Logger.player.debug("Player is inactive")
     }
 
-    func skipToNext() async throws {
-        Logger.player.debug("Requested skip to next item")
-        stopAdvance = true
-        playerNode.stop()
-        playerNode.reset()
-        currentTime = 0
-        trackStartTime = 0
-        try await playNextItem()
-    }
-
-    func insertItem(_ itemID: String, at index: Int) {
-        Logger.player.debug("Adding item to queue: \(itemID)")
-        queue.insert(itemID, at: index)
-    }
-
-    func insertItems(_ itemIds: [String], at index: Int) {
-        queue.insert(contentsOf: itemIds, at: index)
-    }
-
-    func removeItem(at index: Int) {
-        if index >= 0 && index < queue.count {
-            queue.remove(at: index)
-        }
-    }
-
-    func append(itemId: String) {
-        Logger.player.debug("Adding item to queue: \(itemId)")
-        queue.append(itemId)
-    }
-
-    func append(itemIds: [String]) {
-        queue.append(contentsOf: itemIds)
-    }
-
-    private func prepareNextItem() async throws {
-        guard queue.isNotEmpty else {
-            stop()
-            throw PlayerError.emptyQueue
-        }
-
-        currentItemId = queue.removeFirst()
-        Logger.player.debug("Next item will be played: \(self.currentItemId ?? "no-id")")
-        audioFile = try await getItemAudioFile(by: currentItemId!)
-    }
-
-    private func playNextItem() async throws {
-        try await prepareNextItem()
-        try await play()
-    }
-
-    private func scheduleAudio() {
-        Logger.player.debug("Scheduling audio file to play")
-        playerNode.scheduleFile(audioFile!, at: nil) {
-            Task(priority: .background) {
-                if self.stopAdvance {
-                    Logger.player.debug("Requested to not advance in queue")
-                    self.stopAdvance = false
-                    return
-                }
-
-                self.stopPlaybackTimer()
-                self.trackStartTime = self.currentTime
-                self.currentTime = 0
-                try await self.playNextItem()
-            }
-        }
-    }
-
-    /// Handles interruption from a call or Siri
-    @objc private func handleInterruption(notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
-
-        switch type {
-        case .began:
-            pause()
-        case .ended:
-            guard let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
-            let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
-            if options.contains(.shouldResume) { resume() }
-        default:
-            break
-        }
-    }
-
-    private func getItemAudioFile(by itemID: String) async throws -> AVAudioFile? {
+    private func getItemAudioFile(by itemID: String) throws -> AVAudioFile {
         guard let url = FileRepository.shared.fileURL(for: itemID) else {
             throw PlayerError.noData(itemId: itemID)
         }

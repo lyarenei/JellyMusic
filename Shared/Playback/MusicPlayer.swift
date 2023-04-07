@@ -26,21 +26,27 @@ final class MusicPlayer: ObservableObject {
     @Published
     var currentTime: TimeInterval = 0
 
+    private var playTask: Task<Void, Never>?
+
     private var cancellables: Cancellables = []
 
     init(preview: Bool = false) {
         guard !preview else { return }
+
         subscribeToPlayerState()
-        subscribeToCurrentItem()
+//        subscribeToCurrentItem()
         subscribeToCurrentTime()
+
+        // Set interruption handler
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleInterruption),
+            name: AVAudioSession.interruptionNotification,
+            object: nil
+        )
     }
 
     // MARK: - Playback controls
-
-    func play() async throws {
-        try await audioPlayer.play()
-    }
-
     func pause() {
         audioPlayer.pause()
     }
@@ -50,8 +56,8 @@ final class MusicPlayer: ObservableObject {
         case .inactive:
             guard let currentSong = currentSong else { return }
             Task(priority: .userInitiated) {
-                try await enqueue(currentSong.uuid, at: 0)
-                try await audioPlayer.play()
+//                try await enqueue(currentSong.uuid, at: 0)
+                try await audioPlayer.play(song: currentSong)
             }
         case .paused:
             audioPlayer.resume()
@@ -60,82 +66,75 @@ final class MusicPlayer: ObservableObject {
         }
     }
 
-    func stop() {
+    private func stop() {
         audioPlayer.stop()
         playbackQueue.removeAll()
     }
 
-    func playNow(itemId: String) async throws {
-        stop()
-        try await enqueue(itemId)
-        try await play()
+    func play(itemId: String) async throws {
+        guard let song = await SongRepository.shared.getSong(by: itemId) else {
+            Logger.player.debug("Could not find song for ID: \(itemId)")
+            return
+        }
+        try await play(song: song)
+    }
+
+    func play(song: Song) async throws {
+        try await play(songs: [song])
+    }
+
+    func play(songs: [Song]) async throws {
+        playbackQueue = songs
+        try await playNextSong()
     }
 
     func skipForward() async throws {
         guard playbackQueue.isNotEmpty else { return }
-        try await audioPlayer.skipToNext()
-        let previousSong = playbackQueue.removeFirst()
-        playbackHistory.insert(previousSong, at: 0)
+        let nextSong = playbackQueue.removeFirst()
+        playbackHistory.insert(nextSong, at: 0)
+        try await playNextSong()
     }
 
     func skipBackward() async throws {
         guard playbackHistory.isNotEmpty else { return }
-        let nextSong = playbackHistory.removeFirst()
-        try await enqueue(nextSong.uuid, at: 0)
-        try await audioPlayer.skipToNext()
-        playbackQueue.insert(nextSong, at: 0)
+        let previousSong = playbackHistory.removeFirst()
+        playbackQueue.insert(previousSong, at: 0)
+        try await playNextSong()
+    }
+
+    private func playNextSong() async throws {
+        guard playbackQueue.isNotEmpty else { return }
+        let nextSong = playbackQueue.removeFirst()
+        playTask?.cancel()
+        playTask = Task {
+            do {
+                audioPlayer.stop()
+                try await audioPlayer.play(song: nextSong)
+                try await skipForward()
+            } catch {
+                Logger.player.error("Failed to play song: \(nextSong.uuid)")
+            }
+        }
     }
 
     // MARK: - Queuing controls
-
-    func enqueue(_ itemId: String, at index: Int? = nil) async throws {
+    func enqueue(itemId: String, position: EnqueuePosition) async throws {
         guard let song = await SongRepository.shared.getSong(by: itemId) else {
             Logger.player.debug("Could not find song for ID: \(itemId)")
             return
         }
 
         await MainActor.run {
-            if let index = index {
-                self.audioPlayer.insertItem(itemId, at: index)
-                self.playbackQueue.insert(song, at: index)
-                return
+            switch position {
+            case .next:
+                playbackQueue.insert(song, at: 0)
+            case .last:
+                playbackQueue.append(song)
             }
-
-            self.audioPlayer.append(itemId: itemId)
-            self.playbackQueue.append(song)
         }
     }
 
     // MARK: - Subscribers
-
-    private func subscribeToCurrentItem() {
-        audioPlayer.$currentItemId.sink { [weak self] newItemId in
-            Logger.player.debug("AudioPlayer changed current item id to: \(newItemId ?? "nil")")
-            guard let self = self else { return }
-            Task(priority: .background) {
-                await MainActor.run {
-                    if let currentSong = self.currentSong {
-                        self.playbackHistory.insert(currentSong, at: 0)
-                        Logger.player.debug("Added track \(currentSong.uuid) to playback history")
-                    }
-
-                    guard let newItemId = newItemId else {
-                        Logger.player.debug("New item ID is nil, will not do anything")
-                        return
-                    }
-
-                    guard self.playbackQueue.isNotEmpty else {
-                        Logger.player.warning("Playback queue is empty, but track \(newItemId) will be played")
-                        return
-                    }
-
-                    self.currentSong = self.playbackQueue.removeFirst()
-                }
-            }
-        }
-        .store(in: &cancellables)
-    }
-
     private func subscribeToPlayerState() {
         audioPlayer.$playerState.sink { [weak self] curState in
             guard let self = self else { return }
@@ -161,5 +160,29 @@ final class MusicPlayer: ObservableObject {
             }
         }
         .store(in: &cancellables)
+    }
+
+    /// Handles interruption from a call or Siri
+    @objc
+    private func handleInterruption(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+
+        switch type {
+        case .began:
+            pause()
+        case .ended:
+            guard let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
+            let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+            if options.contains(.shouldResume) { resume() }
+        default:
+            break
+        }
+    }
+
+    enum EnqueuePosition {
+        case next
+        case last
     }
 }

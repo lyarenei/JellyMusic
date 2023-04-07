@@ -32,10 +32,9 @@ struct PlayButton: View {
     func action() {
         Task(priority: .userInitiated) {
             do {
-                try await player.playNow(itemId: itemId)
+                try await player.play(itemId: itemId)
             } catch {
                 print("Failed to start playback")
-                player.stop()
             }
         }
     }
