@@ -54,7 +54,7 @@ struct SearchScreen: View {
                         ArtistDetailScreen(artist: artist)
                     } label: {
                         Label(artist.name) {
-                            ArtworkComponent(itemId: artist.id)
+                            ArtworkComponent(for: artist)
                         }
                     }
                 }
@@ -90,6 +90,7 @@ struct SearchScreen_Previews: PreviewProvider {
     static var previews: some View {
         SearchScreen()
             .environmentObject(PreviewUtils.libraryRepo)
+            .environmentObject(ApiClient(previewEnabled: true))
     }
 }
 #endif

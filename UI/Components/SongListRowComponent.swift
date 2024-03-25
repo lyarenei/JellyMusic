@@ -35,7 +35,7 @@ struct SongListRowComponent: View {
                 .frame(minWidth: 20)
         } else if showArtwork {
             let square = CGSize(width: height, height: height)
-            ArtworkComponent(itemId: song.albumId)
+            ArtworkComponent(for: song.albumId)
                 .frame(width: square.width, height: square.height)
         }
     }
@@ -122,6 +122,7 @@ struct SongListRowComponent_Previews: PreviewProvider {
                 .padding(.horizontal)
         }
         .environmentObject(PreviewUtils.libraryRepo)
+        .environmentObject(ApiClient(previewEnabled: true))
         .listStyle(.plain)
     }
 }

@@ -41,7 +41,7 @@ struct ArtistDetailScreen: View {
     @ViewBuilder
     private var artistHeader: some View {
         HStack(spacing: 15) {
-            ArtworkComponent(itemId: viewModel.artist.id)
+            ArtworkComponent(for: viewModel.artist)
                 .frame(width: 90, height: 90)
 
             VStack(alignment: .leading, spacing: 10) {
@@ -81,7 +81,7 @@ struct ArtistDetailScreen: View {
                     Text(album.name)
                         .font(.title3)
                 } icon: {
-                    ArtworkComponent(itemId: album.id)
+                    ArtworkComponent(for: album)
                         .scaledToFit()
                 }
                 .labelStyle(.titleAndIcon)
@@ -139,5 +139,6 @@ struct ArtistDetailScreen: View {
 #Preview {
     NavigationStack {
         ArtistDetailScreen(artist: PreviewData.artist, repo: PreviewUtils.libraryRepo)
+            .environmentObject(ApiClient(previewEnabled: true))
     }
 }

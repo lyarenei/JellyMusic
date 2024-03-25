@@ -63,7 +63,7 @@ struct ArtistLibraryScreen: View {
                 NavigationLink {
                     ArtistDetailScreen(artist: artist)
                 } label: {
-                    ArtworkComponent(itemId: artist.id)
+                    ArtworkComponent(for: artist)
                         .frame(width: 40, height: 40)
 
                     MarqueeText(
@@ -92,11 +92,13 @@ struct ArtistLibraryScreen: View {
 #Preview("Normal") {
     NavigationStack {
         ArtistLibraryScreen(artists: PreviewData.artists, repo: PreviewUtils.libraryRepo)
+            .environmentObject(ApiClient(previewEnabled: true))
     }
 }
 
 #Preview("Empty") {
     NavigationStack {
         ArtistLibraryScreen(artists: [], repo: PreviewUtils.libraryRepo)
+            .environmentObject(ApiClient(previewEnabled: true))
     }
 }

@@ -5,7 +5,7 @@ struct AlbumListRowComponent: View {
 
     var body: some View {
         HStack(spacing: 17) {
-            ArtworkComponent(itemId: album.id)
+            ArtworkComponent(for: album)
                 .frame(width: 60, height: 60)
 
             VStack(alignment: .leading, spacing: 3) {
@@ -30,6 +30,7 @@ struct AlbumListRowComponent_Previews: PreviewProvider {
     static var previews: some View {
         AlbumListRowComponent(album: PreviewData.albums.first!)
             .padding(.horizontal)
+            .environmentObject(ApiClient(previewEnabled: true))
     }
 }
 // swiftlint:enable all

@@ -41,9 +41,11 @@ struct NowPlayingComponent_Previews: PreviewProvider {
     static var previews: some View {
         NowPlayingComponent(isPresented: $isPresented, content: LibraryScreen())
             .previewDisplayName("BG + buttons")
+            .environmentObject(ApiClient(previewEnabled: true))
 
         NowPlayingBar(player: player())
             .previewDisplayName("Content")
+            .environmentObject(ApiClient(previewEnabled: true))
     }
 }
 // swiftlint:enable all
@@ -102,7 +104,7 @@ private struct SongInfo: View {
 
     var body: some View {
         HStack {
-            ArtworkComponent(itemId: song?.albumId ?? .empty)
+            ArtworkComponent(for: song?.albumId ?? .empty)
                 .frame(width: 50, height: 50)
                 .shadow(radius: 6, x: 0, y: 3)
                 .padding(.leading)
