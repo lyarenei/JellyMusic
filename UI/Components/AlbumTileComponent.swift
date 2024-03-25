@@ -2,6 +2,7 @@ import Kingfisher
 import MarqueeText
 import SwiftUI
 
+@available(*, deprecated, message: "Use TileComponent")
 struct AlbumTileComponent: View {
     @EnvironmentObject
     private var library: LibraryRepository
