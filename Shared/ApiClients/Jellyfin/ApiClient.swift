@@ -5,8 +5,10 @@ import OSLog
 import SimpleKeychain
 import SwiftUI
 
-final class ApiClient {
+final class ApiClient: ObservableObject {
     static let shared = ApiClient()
+
+    @Published
     private(set) var services: ApiServices = .preview
 
     init(previewEnabled: Bool = Defaults[.previewMode]) {
