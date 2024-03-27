@@ -54,7 +54,7 @@ struct AlbumDetailScreen: View {
     @ViewBuilder
     private var artworkWithName: some View {
         VStack(spacing: 20) {
-            ArtworkComponent(itemId: album.id)
+            ArtworkComponent(for: album)
                 .frame(width: 270, height: 270)
 
             VStack(spacing: 5) {
@@ -263,10 +263,12 @@ struct AlbumDetailScreen_Previews: PreviewProvider {
         }
         .previewDisplayName("Default")
         .environmentObject(PreviewUtils.libraryRepo)
+        .environmentObject(ApiClient(previewEnabled: true))
 
         AlbumDetailScreen(album: PreviewData.albums.first!)
             .previewDisplayName("Empty")
             .environmentObject(PreviewUtils.libraryRepoEmpty)
+            .environmentObject(ApiClient(previewEnabled: true))
     }
 }
 // swiftlint:enable all

@@ -86,7 +86,7 @@ struct AlbumCollection: View {
     @ViewBuilder
     private func albumListEntry(album: Album) -> some View {
         HStack(spacing: 17) {
-            ArtworkComponent(itemId: album.id)
+            ArtworkComponent(for: album)
                 .frame(width: rowHeight, height: rowHeight)
 
             albumNameArtist(album: album)
@@ -119,7 +119,7 @@ struct AlbumCollection: View {
     private func albumPlainEntry(album: Album) -> some View {
         HStack(spacing: 0) {
             HStack(spacing: 17) {
-                ArtworkComponent(itemId: album.id)
+                ArtworkComponent(for: album)
                     .frame(width: rowHeight, height: rowHeight)
 
                 albumNameArtist(album: album)
@@ -165,6 +165,7 @@ struct AlbumList_Previews: PreviewProvider {
         }
         .previewDisplayName("List")
         .environmentObject(PreviewUtils.libraryRepo)
+        .environmentObject(ApiClient(previewEnabled: true))
 
         VStack {
             AlbumCollection(albums: PreviewData.albums)
@@ -173,6 +174,7 @@ struct AlbumList_Previews: PreviewProvider {
         .previewDisplayName("Vstack")
         .padding(.horizontal)
         .environmentObject(PreviewUtils.libraryRepo)
+        .environmentObject(ApiClient(previewEnabled: true))
 
         ScrollView(.horizontal) {
             HStack {
@@ -183,6 +185,7 @@ struct AlbumList_Previews: PreviewProvider {
         }
         .previewDisplayName("Tiles")
         .environmentObject(PreviewUtils.libraryRepo)
+        .environmentObject(ApiClient(previewEnabled: true))
     }
 }
 #endif

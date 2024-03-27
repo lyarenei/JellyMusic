@@ -2,6 +2,7 @@ import Kingfisher
 import MarqueeText
 import SwiftUI
 
+@available(*, deprecated, message: "Use TileComponent")
 struct AlbumTileComponent: View {
     @EnvironmentObject
     private var library: LibraryRepository
@@ -11,7 +12,7 @@ struct AlbumTileComponent: View {
     var body: some View {
         GeometryReader { proxy in
             VStack(alignment: .leading, spacing: 6) {
-                ArtworkComponent(itemId: album.id)
+                ArtworkComponent(for: album)
 
                 tileNames
                     .padding(.horizontal, 2)
@@ -49,6 +50,7 @@ struct AlbumTile_Previews: PreviewProvider {
         // swiftlint:disable:next force_unwrapping
         AlbumTileComponent(album: PreviewData.albums.first!)
             .environmentObject(PreviewUtils.libraryRepo)
+            .environmentObject(ApiClient(previewEnabled: true))
             .frame(width: 160)
     }
 }

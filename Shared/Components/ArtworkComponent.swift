@@ -4,25 +4,28 @@ import SFSafeSymbols
 import SwiftUI
 
 struct ArtworkComponent: View {
-    private static let cornerRadius: CGFloat = 5
+    private static let cornerRadius = 5.0
+    private static let fadeDuration = 0.5
+    private static let retryCount = 5
+    private static let retryInterval = 10.0
 
-    @State
-    private var artworkImage: PlatformImage?
+    @EnvironmentObject
+    private var apiClient: ApiClient
 
-    let itemId: String
-    let apiClient: ApiClient
+    private let itemId: String
 
-    init(
-        itemId: String,
-        apiClient: ApiClient = .shared
-    ) {
+    init(for item: any JellyfinItem) {
+        self.itemId = item.id
+    }
+
+    init(for itemId: String) {
         self.itemId = itemId
-        self.apiClient = apiClient
     }
 
     var body: some View {
         GeometryReader { proxy in
-            KFImage.dataProvider(getDataProvider())
+            KFImage
+                .dataProvider(jellyfinProvider)
                 .cacheOriginalImage()
                 .resizable()
                 .placeholder {
@@ -31,8 +34,8 @@ struct ArtworkComponent: View {
                         .aspectRatio(contentMode: .fit)
                         .fill(alignment: .center)
                 }
-                .fade(duration: 0.25)
-                .retry(maxCount: 5, interval: .seconds(10))
+                .fade(duration: Self.fadeDuration)
+                .retry(maxCount: Self.retryCount, interval: .seconds(Self.retryInterval))
                 .appendProcessor(DownsamplingImageProcessor(size: doubleSize(proxy.size)))
                 .onFailure { error in
                     Logger.artwork.debug("Failed to load image for item \(itemId): \(error.localizedDescription)")
@@ -44,7 +47,7 @@ struct ArtworkComponent: View {
         }
     }
 
-    private func getDataProvider() -> JellyfinImageDataProvider {
+    private var jellyfinProvider: JellyfinImageDataProvider {
         JellyfinImageDataProvider(
             itemId: itemId,
             imageService: apiClient.services.imageService
@@ -59,16 +62,9 @@ struct ArtworkComponent: View {
     }
 }
 
-#if DEBUG
-// swiftlint:disable all
-struct ArtworkComponent_Previews: PreviewProvider {
-    static var previews: some View {
-        ArtworkComponent(
-            itemId: PreviewData.albums.first!.id,
-            apiClient: .init(previewEnabled: true)
-        )
-        .previewLayout(.fixed(width: 200, height: 200))
-    }
+#Preview {
+    // swiftlint:disable:next force_unwrapping
+    ArtworkComponent(for: PreviewData.albums.first!)
+        .environmentObject(ApiClient(previewEnabled: true))
+        .frame(width: 200, height: 200)
 }
-// swiftlint:enable all
-#endif

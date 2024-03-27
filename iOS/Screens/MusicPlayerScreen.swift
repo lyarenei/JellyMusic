@@ -23,7 +23,7 @@ struct MusicPlayerScreen: View {
     @ViewBuilder
     private func content(for song: Song) -> some View {
         VStack(alignment: .center, spacing: 15) {
-            ArtworkComponent(itemId: song.albumId)
+            ArtworkComponent(for: song.albumId)
                 .frame(
                     width: Screen.size.width - 40,
                     height: Screen.size.width - 40
